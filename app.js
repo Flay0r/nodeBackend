@@ -6,6 +6,7 @@ const mongoose = require('mongoose');
 const users = require('./routes/users');
 const plants = require('./routes/plants');
 const plantconditions = require('./routes/plantconditions');
+const logs = require('./routes/logs');
 const config = require('./config/db');
 const port = 5000;
 
@@ -27,7 +28,9 @@ require('./config/passport')(passport);
 app.use(express.static(path.join(__dirname, 'public')));
 app.use('/users', users);
 app.use('/plants', plants);
-app.use('./plantconditions', plantconditions);
+app.use('/plantconditions', plantconditions);
+app.use('/logs', logs);
+
 
 app.get('/', (req, res) => {
     res.send('nothing to see here');

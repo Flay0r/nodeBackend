@@ -3,7 +3,7 @@ const bcrypt = require('bcryptjs');
 const config = require('../config/db');
 
 const LogSchema = mongoose.Schema({
-    plantName: {
+    plantTitle: {
         type: String,
         required: true
     },
@@ -28,7 +28,7 @@ const LogSchema = mongoose.Schema({
 const Log = module.exports = mongoose.model('Log', LogSchema);
 
 module.exports.getLogsByPlantName = function(name, callback) {
-    const query = {name: name};
+    const query = {plantTitle: name};
     Log.find(query, callback);
 }
 
@@ -36,7 +36,7 @@ module.exports.getLogById = function(id, callback) {
     Log.findById(id, callback);
 }
 
-module.exports.getAll = function(){
+module.exports.getAll = function(callback){
     Log.find(callback);
 }
 

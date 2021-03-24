@@ -5,7 +5,8 @@ const config = require('../config/db');
 const PlantConditionSchema = mongoose.Schema({
     plantType: {
         type: String,
-        required: true
+        required: true,
+        unique: true
     },
     minHumidity: {
         type: String,
@@ -27,7 +28,7 @@ const PlantConditionSchema = mongoose.Schema({
 
 const PlantCondition = module.exports = mongoose.model('PlantCondition', PlantConditionSchema);
 
-module.exports.getPlantConditionByName = function(name, callback) {
+module.exports.getPlantConditionByType = function(name, callback) {
     const query = {name: name};
     PlantCondition.findOne(query, callback);
 }

@@ -3,7 +3,7 @@ const router = express.Router();
 const PlantCondition = require('../models/plantcondition');
 const passport = require('passport');
 
-router.post('/addPlantCondition', (req, res, next) => {
+router.post('/addPlantCondition', passport.authenticate('jwt', { session: false }), (req, res, next) => {
     let newPlantCondition = new PlantCondition({
         plantType: req.body.plantType,
         minHumidity: req.body.minHumidity,
@@ -21,8 +21,8 @@ router.post('/addPlantCondition', (req, res, next) => {
     });
 });
 
-router.get('/getPlantConditionByName', (req, res, next) => {
-    PlantCondition.getPlantConditionByName(req.body.name, (err, plantCondition) => {
+router.get('/getPlantConditionByType', passport.authenticate('jwt', { session: false }), (req, res, next) => {
+    PlantCondition.getPlantConditionByType(req.body.plantType, (err, plantCondition) => {
         if(err){
             res.json({success: false, msg:'failed get'});
         } else {
@@ -31,7 +31,7 @@ router.get('/getPlantConditionByName', (req, res, next) => {
     })
 })
 
-router.get('/getAll', (req, res, next) => {
+router.get('/getAll', passport.authenticate('jwt', { session: false }), (req, res, next) => {
     PlantCondition.getAll((err, plantconditions) => {
         if(err){
             res.json({success: false, msg:'failed get'});
@@ -41,7 +41,7 @@ router.get('/getAll', (req, res, next) => {
     })
 })
 
-router.get('/deletePlantCondition', (req, res, next) => {
+router.get('/deletePlantCondition', passport.authenticate('jwt', { session: false }), (req, res, next) => {
     let plantName = req.body.plantName;
     PlantCondition.deletePlant(plantName, (err) => {
         if(err){

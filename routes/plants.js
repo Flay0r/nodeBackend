@@ -3,7 +3,7 @@ const router = express.Router();
 const Plant = require('../models/plant');
 const passport = require('passport');
 
-router.post('/addPlant', (req, res, next) => {
+router.post('/addPlant', passport.authenticate('jwt', { session: false }), (req, res, next) => {
     let newPlant = new Plant({
         name: req.body.name,
         type: req.body.type,
@@ -21,8 +21,8 @@ router.post('/addPlant', (req, res, next) => {
     });
 });
 
-router.get('/getPlantByName', (req, res, next) => {
-    Plant.getPlantByName(req.body.name, (err, plant) => {
+router.get('/getPlantByName', passport.authenticate('jwt', { session: false }), (req, res, next) => {
+    Plant.getPlantByName(req.body.plantTitle, (err, plant) => {
         if(err){
             res.json({success: false, msg:'failed get'});
         } else {
@@ -31,7 +31,7 @@ router.get('/getPlantByName', (req, res, next) => {
     })
 })
 
-router.get('/getAll', (req, res, next) => {
+router.get('/getAll', passport.authenticate('jwt', { session: false }), (req, res, next) => {
     Plant.getAll((err, plants) => {
         if(err){
             res.json({success: false, msg:'failed get'});
@@ -41,10 +41,10 @@ router.get('/getAll', (req, res, next) => {
     })
 })
 
-router.post('/changeStatus', (req, res, next) => {
+router.post('/changeStatus', passport.authenticate('jwt', { session: false }), (req, res, next) => {
     let update = {
-        newStatus: req.body.newStatus,
-        plantName: req.body.plantName
+        newStatus: req.body.status,
+        plantName: req.body.plantTitle
     }
     Plant.changePlantStatus(update, (err, plant) => {
         if(err) {
@@ -55,7 +55,7 @@ router.post('/changeStatus', (req, res, next) => {
     });
 })
 
-router.get('/deletePlant', (req, res, next) => {
+router.get('/deletePlant', passport.authenticate('jwt', { session: false }), (req, res, next) => {
     let plantName = req.body.plantName;
     Plant.deletePlant(plantName, (err) => {
         if(err){

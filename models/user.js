@@ -5,7 +5,8 @@ const config = require('../config/db');
 const UserSchema = mongoose.Schema({
     name: {
         type: String,
-        required: true
+        required: true,
+        unique: true
     },
     password: {
         type: String,
@@ -34,8 +35,8 @@ module.exports.addUser = function(newUser, callback) {
     })
 }
 
-module.exports.deleteUser = function(user, callback) {
-    const query = {user: user.name};
+module.exports.deleteUser = function(name, callback) {
+    const query = {name: name};
     User.deleteOne(query, callback);
 }
 
@@ -44,4 +45,12 @@ module.exports.comparePassword = function(candidatePassword, hash, callback){
         if(err) throw err;
         callback(null, isMatch);
     })
+}
+
+module.exports.getAll = function(callback) {
+    User.find(callback)
+}
+
+module.exports.validate = function(user, callback) {
+
 }

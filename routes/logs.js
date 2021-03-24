@@ -3,12 +3,12 @@ const router = express.Router();
 const Log = require('../models/log');
 const passport = require('passport');
 
-router.post('/addLog', (req, res, next) => {
+router.post('/addLog', passport.authenticate('jwt', { session: false }), (req, res, next) => {
     let newLog = new Log({
-        plantName: req.body.plantName,
+        plantTitle: req.body.plantTitle,
         loggedBy: req.body.loggedBy,
         timestamp: req.body.timestamp,
-        temperature: req.body.temprature,
+        temperature: req.body.temperature,
         humidity: req.body.humidity
     });
 
@@ -16,13 +16,13 @@ router.post('/addLog', (req, res, next) => {
         if(err){
             res.json({success: false, msg:'failed to register'});
         } else {
-            res.json({success: true, msg:'registered Log'});
+            res.json({success: true, newLog});
         }
     });
 });
 
-router.get('/getLogByPlantName', (req, res, next) => {
-    Log.getLogByPlantName(req.body.name, (err, Log) => {
+router.get('/getLogsByPlantTitle', passport.authenticate('jwt', { session: false }), (req, res, next) => {
+    Log.getLogByPlantName(req.body.plantTitle, (err, Log) => {
         if(err){
             res.json({success: false, msg:'failed get'});
         } else {
@@ -31,7 +31,7 @@ router.get('/getLogByPlantName', (req, res, next) => {
     })
 })
 
-router.get('/getAll', (req, res, next) => {
+router.get('/getAll', passport.authenticate('jwt', { session: false }), (req, res, next) => {
     Log.getAll((err, Log) => {
         if(err){
             res.json({success: false, msg:'failed get'});
@@ -41,7 +41,7 @@ router.get('/getAll', (req, res, next) => {
     })
 })
 
-router.get('/deleteLog', (req, res, next) => {
+router.get('/deleteLog', passport.authenticate('jwt', { session: false }), (req, res, next) => {
     let plantName = req.body.plantName;
     Log.deleteLog(Log, (err) => {
         if(err){

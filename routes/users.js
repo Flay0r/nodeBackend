@@ -5,7 +5,7 @@ const passport = require('passport');
 const jwt = require('jsonwebtoken');
 const config = require('../config/db');
 
-router.post('/register', (req, res, next) => {
+router.post('/register', passport.authenticate('jwt', { session: false }), (req, res, next) => {
     let newUser = new User({
         name: req.body.name,
         password: req.body.password
@@ -20,17 +20,14 @@ router.post('/register', (req, res, next) => {
     });
 });
 
-router.post('/authenticate', (req, res, next) => {
-    const name = req.body.name;
-    const password = req.body.password;
-
-    User.getUserByName(name, (err, user) => {
+router.post('/login', (req, res, next) => {
+    User.getUserByName(req.body.name, (err, user) => {
         if(err) throw err;
         if(!user) {
             return res.json({success: false, msg: 'user not found'});
         }
 
-        User.comparePassword(password, user.password, (err, isMatch) => {
+        User.comparePassword(req.body.password, user.password, (err, isMatch) => {
             if(err) throw err;
             if(isMatch){
                 const token = jwt.sign(user.toJSON(), config.secret, {
@@ -51,12 +48,19 @@ router.post('/authenticate', (req, res, next) => {
     })
 });
 
-router.get('/profile', passport.authenticate('jwt', {session: false}), (req, res, next) => {
-    res.json({user: req.user});
+router.get('/validate', passport.authenticate('jwt', { session: false }), (req, res, next) => {
+    res.json({msg: 'validation successful!', name: req.body.name});
 });
 
-router.get('/validate', (req, res, next) => {
-    res.send('validate menu')
-});
+router.get('/getAll', passport.authenticate('jwt', { session: false }), (req, res, next) => {
+    User.getAll((err, userNames) => {
+        if(err){
+            res.json({success: false, msg:'failed get'});
+        } else {
+            newArr = userNames.map(({name}) => name);
+            res.json(newArr);
+        }
+    })
+})
 
 module.exports = router;
